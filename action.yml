@@ -1,5 +1,5 @@
-name: 'CodeThreat Github Action Scanner'
-description: 'Codethreat Github Action'
+name: 'actmact'
+description: 'actmact'
 inputs:
   FAILED_ARGS:
     description: 'FAILED_ARGS'
