@@ -51,6 +51,8 @@ const output = failedArgsParsed.reduce(
 if(output.automerge === undefined) output.automerge = false;
 if(output.condition === undefined) output.condition = 'AND';
 
+console.log('Context --> ', github.context);
+
 const repoName = github.context.repo.repo;
 const repoOwner = github.context.repo.owner;
 const pr = github.context.payload.pull_request;
