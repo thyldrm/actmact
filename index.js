@@ -51,13 +51,14 @@ const output = failedArgsParsed.reduce(
 if(output.automerge === undefined) output.automerge = false;
 if(output.condition === undefined) output.condition = 'AND';
 
-console.log('Context --> ', github.context);
+console.log('Context --> ', github.context.payload.repository.private);
 
 const repoName = github.context.repo.repo;
 const repoOwner = github.context.repo.owner;
 const pr = github.context.payload.pull_request;
 let branch = github.context.payload.pull_request?.head.ref;
 let repoId = github.context.payload.pull_request?.head.repo.owner.id;
+let type = github.context.payload.repository.private
 
 if(github.context.eventName === 'push'){
   branch = github.context.payload.repository.default_branch;
@@ -90,7 +91,7 @@ const startScan = async () => {
         project: repoName,
         branch: branch,
         account: repoOwner,
-        type: "action",
+        type: type,
         githubtoken: githubtoken,
         id: repoId,
       },
