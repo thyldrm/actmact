@@ -59,10 +59,10 @@ const pr = github.context.payload.pull_request;
 let branch = github.context.payload.pull_request?.head.ref;
 let repoId = github.context.payload.pull_request?.head.repo.owner.id;
 let type;
-if(github.context.payload.repository.private === 'false'){
-  type = 'public'
-} else {
+if(github.context.payload.repository.private){
   type = 'private'
+} else {
+  type = 'public'
 }
 
 if(github.context.eventName === 'push'){
