@@ -75,6 +75,7 @@ const octokit = new Octokit({
 });
 
 let scanProcess;
+let cancellation;
 
 const startScan = async () => {
   try {
@@ -118,7 +119,6 @@ let progressData = [];
 let progressSeverity = [];
 
 const awaitScan = async (sid) => {
-  let cancellation;
   try {
     scanProcess = await axios.get(`${ctServer}/api/scan/status/${sid}`, {
       headers: {
@@ -162,9 +162,9 @@ const awaitScan = async (sid) => {
       const weaknessIsKeywords = output.weakness_is.split(",");
       const weaknessIsCount = findWeaknessTitles(newIssues, weaknessIsKeywords);
 
-      console.log('All Issue --- > ', newIssues );
+      // console.log('All Issue --- > ', newIssues );
 
-      console.log('Weakness --> ', weaknessIsCount)
+      // console.log('Weakness --> ', weaknessIsCount)
 
       
         if (output.condition === "OR") {
@@ -204,8 +204,8 @@ const awaitScan = async (sid) => {
           }
         }
     }
-    console.log('SDS --> ',scanProcess.data.state);
-    console.log('cancelllation ---> ', cancellation)
+    // console.log('SDS --> ',scanProcess.data.state);
+    // console.log('cancelllation ---> ', cancellation)
     if (scanProcess.data.state === "end" || cancellation) {
       await resultScan(
         scanProcess.data.riskscore,
@@ -224,9 +224,12 @@ const awaitScan = async (sid) => {
 };
 const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
   try {
-    console.log(
-      "Scan Completed... " + `%` + progressData[progressData.length - 1],
-    );
+    let reason ;
+    if(!cancellation){
+      reason = `Scan Completed... %${progressData[progressData.length - 1]}`
+    } else {
+      reason = "Pipeline interrupted because the FAILED_ARGS arguments you entered were found... "
+    }
 
     let totalSev = {
       critical: totalSeverities.critical ? totalSeverities.critical : 0,
@@ -237,6 +240,9 @@ const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
 
     core.warning(
       "\n" +
+        "Result : " +
+        reason +
+        "\n" +
         "Critical : " +
         totalSev.critical +
         "\n" +
