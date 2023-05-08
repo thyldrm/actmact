@@ -160,6 +160,10 @@ const awaitScan = async (sid) => {
       const allIssues = await allIssue(repoName, token, ctServer);
       const weaknessIsKeywords = output.weakness_is.split(",");
       const weaknessIsCount = findWeaknessTitles(allIssues, weaknessIsKeywords);
+
+      console.log('All Issue --- > ', allIssues );
+
+      console.log('Weakness --> ', weaknessIsCount)
       
         if (output.condition === "OR") {
           if (
@@ -167,15 +171,18 @@ const awaitScan = async (sid) => {
             output.max_number_of_critical < progressSeverity[progressSeverity.length - 1].critical
           ) {
             core.setFailed("!! FAILED_ARGS : Critical limit exceeded -- ");
+            scanProcess.data.state === 'end'
           } else if (
             output.max_number_of_critical &&
             output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high
           ) {
             core.setFailed("!! FAILED_ARGS : High limit exceeded -- ");
+            scanProcess.data.state === 'end'
           } else if (weaknessIsCount.length > 0) {
             core.setFailed(
               "!! FAILED_ARGS : Weaknesses entered in the weakness_is key were found during the scan.",
             );
+            scanProcess.data.state === 'end'
           }
         } else if (output.condition === "AND") {
           if (
@@ -188,6 +195,7 @@ const awaitScan = async (sid) => {
           core.setFailed(
             "!! FAILED ARGS : Not all conditions are met according to the given arguments",
           );
+          scanProcess.data.state === 'end'
           }
         }
     }
