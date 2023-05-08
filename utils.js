@@ -3,7 +3,7 @@ const axios = require("axios");
 const countAndGroupByTitle = (arr) => {
   const result = [];
   arr.forEach((obj) => {
-    const title = obj.kb_fields.title.en;
+    const title = obj.issue_state.weakness_id;
     const severity = obj.issue_state.severity;
     if (!result.find((o) => o.title === title)) {
       result.push({
