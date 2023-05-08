@@ -33,8 +33,8 @@ if (github.context.eventName === "push") {
   repoId = github.context.payload.repository.id;
 }
 
-const failedArgs = core.getInput("FAILED_ARGS");
-const failedArgsParsed = yaml.load(failedArgs);
+const failedArgsInput = core.getInput("FAILED_ARGS");
+const failedArgsParsed = yaml.load(failedArgsInput);
 const output = failedArgs(failedArgsParsed);
 
 if (output.automerge === undefined) output.automerge = false;
