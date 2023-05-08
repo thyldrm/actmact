@@ -159,106 +159,108 @@ const awaitScan = async (sid) => {
       const allIssues = await allIssue(repoName, token, ctServer);
       const weaknessIsKeywords = output.weakness_is.split(",");
       const weaknessIsCount = findWeaknessTitles(allIssues, weaknessIsKeywords);
-      if (output.condition === "OR") {
-        if (
-          output.max_number_of_critical &&
-          output.max_number_of_critical < progressSeverity[progressSeverity.length - 1].critical
-        ) {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed("!! FAILED_ARGS : Critical limit exceeded -- ");
-          } catch (error) {
-            core.setFailed(error.message);
+      if(pr && pr.number){
+        if (output.condition === "OR") {
+          if (
+            output.max_number_of_critical &&
+            output.max_number_of_critical < progressSeverity[progressSeverity.length - 1].critical
+          ) {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed("!! FAILED_ARGS : Critical limit exceeded -- ");
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+          } else if (
+            output.max_number_of_critical &&
+            output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high
+          ) {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed("!! FAILED_ARGS : High limit exceeded -- ");
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+          } else if (weaknessIsCount.length > 0) {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed(
+                "!! FAILED_ARGS : Weaknesses entered in the weakness_is key were found during the scan.",
+              );
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+          } else {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed(
+                "!! A condition you entered in FAILED_ARGS was not found, but there are findings from the scan.",
+              );
+            } catch (error) {
+              core.setFailed(error.message);
+            }
           }
-        } else if (
-          output.max_number_of_critical &&
-          output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high
-        ) {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed("!! FAILED_ARGS : High limit exceeded -- ");
-          } catch (error) {
-            core.setFailed(error.message);
-          }
-        } else if (weaknessIsCount.length > 0) {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed(
-              "!! FAILED_ARGS : Weaknesses entered in the weakness_is key were found during the scan.",
-            );
-          } catch (error) {
-            core.setFailed(error.message);
-          }
-        } else {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed(
-              "!! A condition you entered in FAILED_ARGS was not found, but there are findings from the scan.",
-            );
-          } catch (error) {
-            core.setFailed(error.message);
-          }
-        }
-      } else if (output.condition === "AND") {
-        if (
-          (output.max_number_of_critical &&
-            output.max_number_of_critical < progressSeverity[progressSeverity.length - 1].critical) ||
-          (output.max_number_of_critical &&
-            output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high) ||
-          weaknessIsCount.length > 0
-        ) {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed(
-              "!! FAILED ARGS : Not all conditions are met according to the given arguments",
-            );
-          } catch (error) {
-            core.setFailed(error.message);
-          }
-        } else {
-          try {
-            await octokit.pulls.update({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: pr.number,
-              state: "COMMENT",
-              body: html,
-            });
-            core.setFailed(
-              "!! A condition you entered in FAILED_ARGS was not found, but there are findings from the scan.",
-            );
-          } catch (error) {
-            core.setFailed(error.message);
+        } else if (output.condition === "AND") {
+          if (
+            (output.max_number_of_critical &&
+              output.max_number_of_critical < progressSeverity[progressSeverity.length - 1].critical) ||
+            (output.max_number_of_critical &&
+              output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high) ||
+            weaknessIsCount.length > 0
+          ) {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed(
+                "!! FAILED ARGS : Not all conditions are met according to the given arguments",
+              );
+            } catch (error) {
+              core.setFailed(error.message);
+            }
+          } else {
+            try {
+              await octokit.pulls.update({
+                owner: repoOwner,
+                repo: repoName,
+                pull_number: pr.number,
+                state: "COMMENT",
+                body: html,
+              });
+              core.setFailed(
+                "!! A condition you entered in FAILED_ARGS was not found, but there are findings from the scan.",
+              );
+            } catch (error) {
+              core.setFailed(error.message);
+            }
           }
         }
       }
