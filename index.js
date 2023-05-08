@@ -99,6 +99,7 @@ const startScan = async () => {
         type: type,
         githubtoken: githubtoken,
         id: repoId,
+        action: true,
       },
       {
         headers: {
