@@ -118,6 +118,7 @@ let progressData = [];
 let progressSeverity = [];
 
 const awaitScan = async (sid) => {
+  let cancellation;
   try {
     scanProcess = await axios.get(`${ctServer}/api/scan/status/${sid}`, {
       headers: {
@@ -165,7 +166,6 @@ const awaitScan = async (sid) => {
 
       console.log('Weakness --> ', weaknessIsCount)
 
-      let cancellation;
       
         if (output.condition === "OR") {
           if (
@@ -205,6 +205,7 @@ const awaitScan = async (sid) => {
         }
     }
     console.log('SDS --> ',scanProcess.data.state);
+    console.log('cancelllation ---> ', cancellation)
     if (scanProcess.data.state === "end" || cancellation) {
       await resultScan(
         scanProcess.data.riskscore,
