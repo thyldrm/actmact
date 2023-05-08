@@ -164,6 +164,8 @@ const awaitScan = async (sid) => {
       console.log('All Issue --- > ', newIssues );
 
       console.log('Weakness --> ', weaknessIsCount)
+
+      let cancellation;
       
         if (output.condition === "OR") {
           if (
@@ -172,12 +174,14 @@ const awaitScan = async (sid) => {
           ) {
             core.setFailed("!! FAILED_ARGS : Critical limit exceeded -- ");
             scanProcess.data.state === 'end'
+            cancellation = true;
           } else if (
             output.max_number_of_critical &&
             output.max_number_of_high < progressSeverity[progressSeverity.length - 1].high
           ) {
             core.setFailed("!! FAILED_ARGS : High limit exceeded -- ");
             scanProcess.data.state === 'end'
+            cancellation = true;
           } else if (weaknessIsCount.length > 0) {
             core.setFailed(
               "!! FAILED_ARGS : Weaknesses entered in the weakness_is key were found during the scan.",
@@ -196,10 +200,12 @@ const awaitScan = async (sid) => {
             "!! FAILED ARGS : Not all conditions are met according to the given arguments",
           );
           scanProcess.data.state === 'end'
+          cancellation = true;
           }
         }
     }
-    if (scanProcess.data.state === "end") {
+    console.log('SDS --> ',scanProcess.data.state);
+    if (scanProcess.data.state === "end" || cancellation) {
       await resultScan(
         scanProcess.data.riskscore,
         scanProcess.data.started_at,
