@@ -80,6 +80,7 @@ const startScan = async () => {
         },
       }
     );
+    console.log(scanStarting);
     return scanStarting;
   } catch (error) {
     // core.setFailed(error.message);
