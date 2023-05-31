@@ -62,25 +62,32 @@ const startScan = async () => {
     responseToken?.data.access_token
       ? (token = responseToken.data.access_token)
       : token;
-    const scanStarting = await axios.post(
-      `${ctServer}/api/integration/github/start`,
-      {
-        project: repoName,
-        branch: branch,
-        account: repoOwner,
-        type: type,
-        githubtoken: githubtoken,
-        id: repoId,
-        action: true,
-      },
-      {
-        headers: {
-          Authorization: token,
-          "x-ct-organization": "codethreat",
+    let scanStarting;
+    try {
+      scanStarting = await axios.post(
+        `${ctServer}/api/integration/github/start`,
+        {
+          project: repoName,
+          branch: branch,
+          account: repoOwner,
+          type: type,
+          githubtoken: githubtoken,
+          id: repoId,
+          action: true,
         },
-      }
-    );
-    console.log(scanStarting);
+        {
+          headers: {
+            Authorization: token,
+            "x-ct-organization": "codethreat",
+          },
+        }
+      );
+      console.log(scanStarting)
+    } catch (error) {
+      console.log(scanStarting)
+      console.log(error);
+      throw new Error(error)
+    }
     return scanStarting;
   } catch (error) {
     // core.setFailed(error.message);
