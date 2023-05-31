@@ -406,6 +406,7 @@ const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
   let start;
   try {
     start = await startScan();
+    console.log(start);
     await awaitScan(start.data.scan_id);
   } catch (error) {
     core.setFailed(error)
