@@ -82,10 +82,15 @@ const startScan = async () => {
           },
         }
       );
-      console.log(scanStarting)
+      console.log("1", scanStarting)
     } catch (error) {
-      console.log(scanStarting)
-      console.log(error);
+      console.log("2",scanStarting)
+      console.log("3",scanStarting?.data)
+      console.log("4",error);
+      console.log("5",error?.data);
+      console.log("6",error?.response);
+      console.log("5",scanStarting?.response);
+
       throw new Error(error)
     }
     return scanStarting;
