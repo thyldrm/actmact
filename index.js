@@ -33,11 +33,13 @@ if (github.context.eventName === "push") {
   repoId = github.context.payload.repository.id;
 }
 
+console.log("PAYLOAD ------> ,,,,,,, ___>", github.context.payload)
+console.log("ContECTrt ------> ,,,,,,, ___>", github.context)
+
 const failedArgsInput = core.getInput("FAILED_ARGS");
 const failedArgsParsed = yaml.load(failedArgsInput);
 const output = failedArgs(failedArgsParsed);
-const projectName = core.getInput("PROJECT_NAME");
-console.log(projectName)
+
 
 if (output.automerge === undefined) output.automerge = false;
 if (output.condition === undefined) output.condition = "AND";
