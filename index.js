@@ -83,7 +83,6 @@ const startScan = async () => {
     return scanStarting;
   } catch (error) {
     core.setFailed(error.message);
-    throw new Error(error.message)
   }
 };
 
@@ -189,7 +188,6 @@ const awaitScan = async (sid) => {
     }
   } catch (error) {
     core.setFailed(error.message);
-    throw new Error(error.message)
   }
 };
 const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
@@ -404,6 +402,11 @@ const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
 };
 
 (async () => {
-  const start = await startScan();
+  let start;
+  try {
+    start = await startScan();
+  } catch (error) {
+    core.setFailed(error.message)
+  }
   await awaitScan(start.data.scan_id);
 })();
