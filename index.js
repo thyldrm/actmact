@@ -36,6 +36,8 @@ if (github.context.eventName === "push") {
 const failedArgsInput = core.getInput("FAILED_ARGS");
 const failedArgsParsed = yaml.load(failedArgsInput);
 const output = failedArgs(failedArgsParsed);
+const projectName = core.getInput("PROJECT_NAME");
+console.log(projectName)
 
 if (output.automerge === undefined) output.automerge = false;
 if (output.condition === undefined) output.condition = "AND";
@@ -81,6 +83,7 @@ const startScan = async () => {
     return scanStarting;
   } catch (error) {
     core.setFailed(error.message);
+    throw new Error(error.message)
   }
 };
 
@@ -186,6 +189,7 @@ const awaitScan = async (sid) => {
     }
   } catch (error) {
     core.setFailed(error.message);
+    throw new Error(error.message)
   }
 };
 const resultScan = async (riskS, started_at, ended_at, totalSeverities) => {
