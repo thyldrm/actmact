@@ -1,0 +1,35 @@
+variables:
+  # GitLab default variables
+  GITLAB_BASE_URL: ""
+  GITLAB_ACCESS_TOKEN: ""
+  GITLAB_USER_LOGIN: "$GITLAB_USER_LOGIN"
+  
+  # Codethreat specific variables
+  CT_BASE_URL: "" # SAST Center base URL
+  CT_TOKEN: ""    # USER API token
+  CT_ORGANIZATION: "" # Organization Name
+  FAILED_ARGS: '{"max_number_of_critical":5,"max_number_of_high":4,"weakness_is":".*injection","condition":"OR"}'
+  
+codethreat-sast-scan:
+  stage: test
+  image:
+    name: thyldrm/docker-node-example6
+    entrypoint: ['']
+  script:
+    - cd /codethreat-sast-cli && npm start
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+
+codethreat-sast-scan-manual:
+  stage: test
+  image:
+    name: thyldrm/docker-node-example6
+    entrypoint: ['']
+  script:
+    - cd /codethreat-sast-cli && npm start
+  when: manual
+  allow_failure: true
