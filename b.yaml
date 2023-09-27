@@ -8,6 +8,7 @@ variables:
   CT_BASE_URL: "" # SAST Center base URL
   CT_TOKEN: ""    # USER API token
   CT_ORGANIZATION: "" # Organization Name
+  FAILED_ARGS: '{}'
   
 codethreat-sast-scan:
   stage: test
