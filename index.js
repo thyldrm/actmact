@@ -22,30 +22,30 @@ const ctServer = process.env.CT_SERVER;
 const username = process.env.USERNAME;
 const password = process.env.PASSWORD;
 const orgname = process.env.ORGNAME;
+
 const repoName = github.context.repo.repo;
 const repoOwner = github.context.repo.owner;
-const pr = github.context.payload.pull_request;
 const type = github.context.payload.repository.private ? "private" : "public";
-const commitId = github.context.payload.after;
+const parts = github.context.ref.split("/");
+let branch = parts.at(-1);
+let repoId = github.context.payload.repository.id;
+
+let pr;
+if (github.context.eventName === "pull_request") {
+  pr = github.context.payload.pull_request;
+  branch = pr.base.ref;
+  repoId = pr.head.repo.owner.id;
+}
+
+const commitId = github.context.payload.after || pr?.head?.sha;
 const committer = github.context.actor;
 const commitMessage =
   github.context.payload?.head_commit?.message ||
   github.context.payload?.pull_request?.title;
 
-let branch = github.context.payload.pull_request?.base?.ref;
-let repoId = github.context.payload.pull_request?.head?.repo?.owner?.id;
-
-if (github.context.eventName === "push") {
-  const parts = github.context.ref.split("/");
-  console.log("github.context.ref", github.context.ref);
-  console.log("parts", parts);
-  branch = parts.at(-1);
-  repoId = github.context.payload.repository.id;
-}
-
 console.log("repoName", repoName);
 console.log("repoOwner", repoOwner);
-console.log("pr", pr);
+console.log("pr", pr?.number);
 console.log("type", type);
 console.log("commitId", commitId);
 console.log("committer", committer);
