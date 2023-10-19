@@ -7,7 +7,7 @@ const yaml = require("js-yaml");
 const {
   findWeaknessTitles,
   failedArgs,
-  sign,
+  login,
   check,
   create,
   start,
@@ -56,11 +56,18 @@ const octokit = new Octokit({
 
 let scanProcess, authToken, checked;
 
-const signIn = async () => {
+console.log("------------------------------")
+console.log("CodeThreat Server: " + ctServer);
+console.log("User: " + repoOwner);
+console.log("Project: " + repoName);
+console.log("Organization: " + orgname)
+console.log("------------------------------")
+
+const loginIn = async () => {
   if (token && (!username || !password)) {
     authToken = token;
   } else if (username && password) {
-    authToken = await sign(ctServer, username, password);
+    authToken = await login(ctServer, username, password);
   } else {
     core.setFailed("Please enter username and password or token.");
   }
@@ -108,6 +115,7 @@ const scanStatus = async (sid) => {
       core.setFailed("Scan Failed.");
       throw new Error("Scan Failed.");
     }
+    console.log("Scan started successfuly.")
     if(!output.sync_scan){
       console.log("Scan started successfuly.")
       return;
@@ -207,6 +215,7 @@ const resultScan = async (progress, severities, sid) => {
       severities.low
   );
   const report = await result(ctServer, sid, authToken, orgname);
+  console.log("Report Created")
 
   if (github.context.eventName === "push") {
     try {
@@ -257,7 +266,7 @@ const resultScan = async (progress, severities, sid) => {
 (async () => {
   let start;
   try {
-    await signIn();
+    await loginIn();
     checked = await checkProject();
     if (checked.type === null) await createProject();
     start = await startScan();
