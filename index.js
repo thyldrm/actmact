@@ -217,6 +217,12 @@ const resultScan = async (progress, severities, sid) => {
   const report = await result(ctServer, sid, authToken, orgname);
   console.log("Report Created")
 
+  console.log(github.context.eventName);
+  console.log(repoOwner);
+  console.log(repoName);
+  console.log(commitId);
+
+
   if (github.context.eventName === "push") {
     try {
       await octokit.repos.createCommitComment({
