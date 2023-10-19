@@ -56,6 +56,10 @@ const octokit = new Octokit({
 
 let scanProcess, authToken, checked;
 
+console.log(commitId)
+console.log(committer)
+console.log(commitMessage)
+
 console.log("------------------------------")
 console.log("CodeThreat Server: " + ctServer);
 console.log("User: " + repoOwner);
