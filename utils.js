@@ -53,7 +53,7 @@ const failedArgs = (failedArgsParsed) => {
   return output;
 };
 
-const sign = async (ctServer, username, password) => {
+const login = async (ctServer, username, password) => {
   let responseToken;
   try {
     responseToken = await axios.post(`${ctServer}/api/signin`, {
@@ -63,6 +63,7 @@ const sign = async (ctServer, username, password) => {
   } catch (error) {
     throw new Error(error.response.data.message);
   }
+  console.log("Login successful")
   return responseToken.data.access_token;
 };
 
@@ -124,6 +125,7 @@ const create = async (
   } catch (error) {
     throw new Error(error.response.data.message);
   }
+  console.log("Project Created.")
   return createProject;
 };
 
@@ -199,7 +201,7 @@ const status = async (ctServer, sid, authToken, orgname) => {
 const result = async (ctServer, sid, authToken, orgname) => {
   let resultScan;
   try {
-    scanProcess = await axios.get(`${ctServer}/api/plugins/helper?sid=${sid}`, {
+    resultScan = await axios.get(`${ctServer}/api/plugins/helper?sid=${sid}`, {
       headers: {
         Authorization: authToken,
         "x-ct-organization": orgname,
@@ -209,13 +211,13 @@ const result = async (ctServer, sid, authToken, orgname) => {
   } catch (error) {
     throw new Error(error.response.data.message);
   }
-  return scanProcess.data.report;
+  return resultScan.data.report;
 }
 
 module.exports = {
   findWeaknessTitles,
   failedArgs,
-  sign,
+  login,
   check,
   create,
   start,
