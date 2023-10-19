@@ -108,7 +108,7 @@ const scanStatus = async (sid) => {
       core.setFailed("Scan Failed.");
       throw new Error("Scan Failed.");
     }
-    if(output.sync_scan){
+    if(!output.sync_scan){
       console.log("Scan started successfuly.")
       return;
     }
