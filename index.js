@@ -56,10 +56,6 @@ const octokit = new Octokit({
 
 let scanProcess, authToken, checked;
 
-console.log(commitId)
-console.log(committer)
-console.log(commitMessage)
-
 console.log("------------------------------")
 console.log("CodeThreat Server: " + ctServer);
 console.log("User: " + repoOwner);
@@ -119,7 +115,6 @@ const scanStatus = async (sid) => {
       core.setFailed("Scan Failed.");
       throw new Error("Scan Failed.");
     }
-    console.log("Scan started successfuly.")
     if(!output.sync_scan){
       console.log("Scan started successfuly.")
       return;
