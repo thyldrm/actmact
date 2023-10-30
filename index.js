@@ -54,6 +54,10 @@ if (output.condition === undefined) output.condition = "AND";
 if (output.sync_scan === undefined) output.sync_scan = true;
 if (output.weakness_is === undefined) output.weakness_is = "";
 
+console.log("output", output);
+
+console.log("JOSN STRİGng output", JSON.stringify(output));
+
 const octokit = new Octokit({
   auth: githubtoken,
 });
