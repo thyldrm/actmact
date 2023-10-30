@@ -42,13 +42,14 @@ const commitMessage =
   github.context.payload?.head_commit?.message ||
   github.context.payload?.pull_request?.title;
 
-const failedArgsInput = core.getInput("FAILED_ARGS");
+const failedArgsInput = core.getInput("FAILED_ARGS") || {};
 const failedArgsParsed = yaml.load(failedArgsInput);
 const output = failedArgs(failedArgsParsed);
 
 if (output.automerge === undefined) output.automerge = false;
 if (output.condition === undefined) output.condition = "AND";
 if (output.sync_scan === undefined) output.sync_scan = true;
+if (output.weakness_is === undefined) output.weakness_is = "";
 
 const octokit = new Octokit({
   auth: githubtoken,
@@ -131,14 +132,16 @@ const scanStatus = async (sid) => {
           " Medium : " +
           scanProcess.severities.medium +
           " Low : " +
-          scanProcess.severities.low +
-          "\n"
-      );
+          scanProcess.severities.low);
 
-      const weaknessIsCount = findWeaknessTitles(
-        scanProcess.weaknessesArr,
-        output.weakness_is.split(",")
-      );
+      const weaknessArray = [...new Set(scanProcess.weaknessesArr)];
+      let weaknessIsCount;
+      if(output.weakness_is !== ""){
+        const keywords = output.weakness_is.split(",");
+        weaknessIsCount = findWeaknessTitles(weaknessArray, keywords);
+      } else {
+        weaknessIsCount = [];
+      }
 
       if (output.condition === "OR") {
         if (
@@ -161,7 +164,9 @@ const scanStatus = async (sid) => {
           core.setFailed(
             "!! FAILED_ARGS : Weaknesses entered in the weakness_is key were found during the scan."
           );
-          scanProcess.state === "end";
+          throw new Error(
+            "Pipeline interrupted because the FAILED_ARGS arguments you entered were found..."
+          );
         }
       } else if (output.condition === "AND") {
         if (
@@ -215,12 +220,6 @@ const resultScan = async (progress, severities, sid) => {
   );
   const report = await result(ctServer, sid, authToken, orgname);
   console.log("Report Created")
-
-  console.log(github.context.eventName);
-  console.log(repoOwner);
-  console.log(repoName);
-  console.log(commitId);
-
 
   if (github.context.eventName === "push") {
     try {
