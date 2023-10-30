@@ -43,6 +43,9 @@ const commitMessage =
   github.context.payload?.pull_request?.title;
 
 const failedArgsInput = core.getInput("FAILED_ARGS") || {};
+
+console.log(failedArgsInput);
+
 const failedArgsParsed = yaml.load(failedArgsInput);
 const output = failedArgs(failedArgsParsed);
 
