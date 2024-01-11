@@ -13,7 +13,7 @@ variables:
 codethreat-sast-scan:
   stage: test
   image:
-    name: thyldrm/docker-node-example8
+    name: thyldrm/docker-node-example9
     entrypoint: ['']
   script:
     - cd /codethreat-sast-cli && npm start
@@ -27,7 +27,7 @@ codethreat-sast-scan:
 codethreat-sast-scan-manual:
   stage: test
   image:
-    name: thyldrm/docker-node-example8
+    name: thyldrm/docker-node-example9
     entrypoint: ['']
   script:
     - cd /codethreat-sast-cli && npm start
